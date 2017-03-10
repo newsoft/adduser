@@ -21,3 +21,10 @@ This standalone piece code can run in many contexts:
 `x86_64-w64-mingw32-gcc -oadduser64.exe adduser.c -lnetapi32`
 - Create a 64-bit DLL file:
 `x86_64-w64-mingw32-gcc -shared -oadduser64.dll adduser.c -lnetapi32`
+
+### Using Visual Studio (tested with VS2013)
+
+- Create an EXE file:
+`cl.exe adduser.c /link /DEFAULTLIB:ADVAPI32 /DEFAULTLIB:NETAPI32`
+- Create a DLL file:
+`cl.exe adduser.c /LD /link /DEFAULTLIB:ADVAPI32 /DEFAULTLIB:NETAPI32`

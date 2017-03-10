@@ -126,9 +126,9 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD  ul_reason_for_call, LPVOID lpReser
 extern "C" {
 #endif
 
-void __stdcall __declspec(dllexport) CreateAdminUser(HWND hwnd, HINSTANCE hinst, LPSTR lpszCmdLine, int nCmdShow)
+__declspec(dllexport) void __stdcall CreateAdminUser(HWND hwnd, HINSTANCE hinst, LPSTR lpszCmdLine, int nCmdShow)
 {
-		CreateAdminUserInternal();
+	CreateAdminUserInternal();
 }
 
 #ifdef __cplusplus
