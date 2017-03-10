@@ -1,12 +1,9 @@
 /*
- * ADDUSER.C: creating a Windows user programmatically
- *
- * Compiling with Visual Studio:
- * cl.exe /D "_UNICODE" /D "UNICODE" adduser.c /link /DEFAULTLIB:ADVAPI32
- *
+ * ADDUSER.C: creating a Windows user programmatically.
  */
 
-#pragma comment(lib, "netapi32.lib")
+#define UNICODE
+#define _UNICODE
 
 #include <windows.h>
 #include <string.h>
@@ -15,7 +12,7 @@
 #include <Tchar.h>
 
 
-DWORD create_admin_user(void)
+DWORD CreateAdminUserInternal(void)
 {
 NET_API_STATUS rc;
 BOOL b;
@@ -30,8 +27,6 @@ BYTE Sid[256];
 
 DWORD cbDomain = 256 / sizeof(TCHAR);
 TCHAR Domain[256];
-
-	OutputDebugString( _T("ADDUSER: in create_admin_user") );
 
 	//
 	// Create user
@@ -101,18 +96,50 @@ TCHAR Domain[256];
 		return rc;
 	}
 
-	OutputDebugString( _T("ADDUSER: admin user created successfully!") );
-
 	return 0;
 }
 
-
 //
-// Command-line entry point
+// DLL entry point.
 //
 
-int _tmain(int argc, _TCHAR* argv[])
+BOOL APIENTRY DllMain(HMODULE hModule, DWORD  ul_reason_for_call, LPVOID lpReserved)
 {
-	create_admin_user();
-	return 0;
+	switch (ul_reason_for_call)
+	{
+	case DLL_PROCESS_ATTACH:
+		CreateAdminUserInternal();
+	case DLL_THREAD_ATTACH:
+	case DLL_THREAD_DETACH:
+	case DLL_PROCESS_DETACH:
+		break;
+	}
+	return TRUE;
+}
+
+//
+// RUNDLL32 entry point.
+// https://support.microsoft.com/en-us/help/164787/info-windows-rundll-and-rundll32-interface
+//
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+void __stdcall __declspec(dllexport) CreateAdminUser(HWND hwnd, HINSTANCE hinst, LPSTR lpszCmdLine, int nCmdShow)
+{
+		CreateAdminUserInternal();
+}
+
+#ifdef __cplusplus
+}
+#endif
+
+//
+// Command-line entry point.
+//
+
+int main()
+{
+	return CreateAdminUserInternal();
 }
